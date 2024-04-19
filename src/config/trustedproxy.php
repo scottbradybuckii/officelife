@@ -17,7 +17,7 @@ return [
      * of your proxy (e.g. if using ELB or similar).
      *
      */
-    'proxies' => env('APP_TRUSTED_PROXIES', null),
+    'proxies' => env('APP_TRUSTED_PROXIES', '**'),
 
     /*
      * To trust one or more specific proxies that connect

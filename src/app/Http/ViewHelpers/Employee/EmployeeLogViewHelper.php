@@ -20,6 +20,7 @@ class EmployeeLogViewHelper
             $author = $log->author;
 
             $logsCollection->push([
+                'action' => $log->action,
                 'localized_content' => $log->content,
                 'author' => [
                     'id' => is_null($author) ? null : $author->id,

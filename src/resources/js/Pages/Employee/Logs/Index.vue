@@ -22,11 +22,12 @@
 <template>
   <layout :notifications="notifications">
     <div class="ph2 ph0-ns">
-      <breadcrumb :with-box="true"
-                  :root-url="'/' + $page.props.auth.company.id + '/dashboard'"
-                  :root="$t('app.breadcrumb_dashboard')"
-                  :previous-url="'/' + $page.props.auth.company.id + '/employees/' + employee.id"
-                  :previous="employee.name"
+      <breadcrumb
+        :with-box="true"
+        :root-url="'/' + $page.props.auth.company.id + '/dashboard'"
+        :root="$t('app.breadcrumb_dashboard')"
+        :previous-url="'/' + $page.props.auth.company.id + '/employees/' + employee.id"
+        :previous="employee.name"
       >
         {{ $t('app.breadcrumb_employee_logs') }}
       </breadcrumb>
@@ -41,8 +42,23 @@
             {{ $t('employee.audit_log_title') }}
           </h2>
 
+          <div class="relative pv2 ph2 bb bb-gray">
+            <select
+              id="search"
+              v-model="searchTerm"
+              name="search"
+              placeholder="Search for a log"
+              class="br2 f5 w-100 ba b--black-40 pa2 outline-0"
+            >
+              <option value="">Filter by log type</option>
+              <option v-for="type in logTypes" :value="type" :key="type">
+                {{ toTitleCase(type) }}
+              </option>
+            </select>
+          </div>
+
           <ul class="list pl0 mt0 mb0 center" data-cy="logs-list">
-            <li v-for="log in logs" :key="log.id" class="flex items-center lh-copy pa3 bb b--black-10 log-item">
+            <li v-for="log in filteredLogs" :key="log.id" class="flex items-center lh-copy pa3 bb b--black-10 log-item">
               <!-- avatar -->
               <avatar :avatar="log.author.avatar" :size="34" :class="'author-avatar br-100'" />
 
@@ -69,7 +85,12 @@
 
           <!-- Pagination -->
           <div class="center cf pa3">
-            <inertia-link v-show="paginator.previousPageUrl" class="fl dib" :href="paginator.previousPageUrl" title="Previous">
+            <inertia-link
+              v-show="paginator.previousPageUrl"
+              class="fl dib"
+              :href="paginator.previousPageUrl"
+              title="Previous"
+            >
               &larr; {{ $t('app.previous') }}
             </inertia-link>
             <inertia-link v-show="paginator.nextPageUrl" class="fr dib" :href="paginator.nextPageUrl" title="Next">
@@ -86,6 +107,7 @@
 import Layout from '@/Shared/Layout';
 import Breadcrumb from '@/Shared/Layout/Breadcrumb';
 import Avatar from '@/Shared/Avatar';
+import { toTitleCase, logTypes } from './types';
 
 export default {
   components: {
@@ -112,5 +134,21 @@ export default {
       default: null,
     },
   },
+
+  data() {
+    return {
+      searchTerm: '',
+      logTypes,
+    };
+  },
+  computed: {
+    filteredLogs() {
+      if (!this.searchTerm) return this.logs;
+      return this.logs.filter((log) => {
+        return log.action == this.searchTerm;
+      });
+    },
+  },
+  methods: { toTitleCase },
 };
 </script>

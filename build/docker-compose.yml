@@ -1,0 +1,50 @@
+version: '3'
+
+networks:
+  proxy:
+    name: proxy-network
+    external: true
+  default:
+
+services:
+  db:
+    image: postgres:12
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  web:
+    image: buckii/web-laravel:8.0
+    volumes:
+      - ${SRC_ROOT}:/app
+    env_file:
+      - web.vars
+    environment:
+      VIRTUAL_HOST: ${LOCAL_DOMAIN}
+      CERT_NAME: 'default'
+      HSTS: 'off'
+      WEBPACK_5_ENABLED: 'true'
+    depends_on:
+      - db
+    networks:
+      - default
+      - proxy
+
+  memcached:
+    image: memcached:latest
+
+  mailhog:
+    image: mailhog/mailhog
+    environment:
+      VIRTUAL_HOST: mailhog.${LOCAL_DOMAIN}
+      CERT_NAME: 'default'
+      HSTS: 'off'
+      VIRTUAL_PORT: '8025'
+    networks:
+      - default
+      - proxy
+
+volumes:
+  db_data:
