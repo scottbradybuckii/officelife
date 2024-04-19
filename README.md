@@ -1,3 +1,37 @@
+# Buckeye Innovation Readme
+
+The repo is split into two folders:
+
+- `build`: managing the infrastructure of the repository
+  - Docker scripts
+  - Environment variables
+  - Makefile
+- `src`: a normal laravel code repository
+
+### Getting Started
+
+This repository is setup to run inside of a docker container, and there are simple makefile scripts to help start / stop / manage those containers.
+
+In order to run any of these scripts, you must first `cd` into the `build` folder.
+
+#### Scripts:
+
+- `make up`: This starts (or restarts) all of the docker containers that are needed for this site. If an enviroment variable changes, `make up` should be run to restart the container
+- `make down`: This stops all of the docker containers for this project.
+- `make web-shell`: This give you a shell inside the PHP docker container. You will need to run this if you are trying to run any PHP or Yarn-specific commands like `composer install`, `yarn install`, etc.
+- `make db-shell`: This gives you a psql shell inside of the database docker container. This is useful for running raw SQL queries against the database.
+- `make watch`: This project uses Vue, so in order for changes to Vue files to compile and show, a watcher needs to be running. This command is the same thing as running `make web-shell` then `yarn watch`
+
+#### Demo Data:
+
+- This project is seeded with demo data, the default username is `admin@admin.com` and the password is `password`
+
+#### Development Workflow:
+
+- The `src` folder is mounted inside of the PHP docker container. This means that any change to a file inside the `src` folder will immediately take effect. There is no need to rebuild or restart the docker container. It should act like local development.
+
+# Original Readme
+
 <h1 align="center">
 	<img
 		width="300"
@@ -23,7 +57,7 @@
 
 [![Build and test](https://img.shields.io/github/workflow/status/officelifehq/officelife/Build%20and%20test/master)](https://github.com/officelifehq/officelife/actions?query=workflow%3A%22Build+and+test%22)
 [![Lines of Code](https://img.shields.io/tokei/lines/github/officelifehq/officelife)](https://sonarcloud.io/dashboard?id=officelife)
-[![Code coverage](https://img.shields.io/sonar/coverage/officelife?server=https%3A%2F%2Fsonarcloud.io)](https://sonarcloud.io/project/activity?custom_metrics=coverage&amp;graph=custom&amp;id=officelife)
+[![Code coverage](https://img.shields.io/sonar/coverage/officelife?server=https%3A%2F%2Fsonarcloud.io)](https://sonarcloud.io/project/activity?custom_metrics=coverage&graph=custom&id=officelife)
 [![License](https://img.shields.io/github/license/officelifehq/officelife)](https://opensource.org/licenses/BSD-3-Clause)
 
 </div>
@@ -40,37 +74,41 @@ We've created OfficeLife to provide a single source of truth for everything an e
 
 OfficeLife has the following features, in 5 major domains:
 
-* 👋 Recruit
-   * Applicant tracking system
-   * Onboarding / offboarding (coming soon)
+- 👋 Recruit
 
-* 🥸 Manage
-    * Employee management
-    * Team management
-    * Company management
+  - Applicant tracking system
+  - Onboarding / offboarding (coming soon)
 
-* 👷‍♀️ Operate
-    * Time tracking
-    * PTOs (ie holidays and time offs) (coming soon)
-    * Expenses management
-    * Hardware and software licenses
-    * Project management
+- 🥸 Manage
 
-* ☎️ Communicate
-    * Work logs
-    * Recent ships
-    * Team and company news
-    * Get to know your colleagues
-    * Wikis
+  - Employee management
+  - Team management
+  - Company management
 
-* 🥳 Grow
-    Employee and team morale
-    * One on Ones
-    * Rate your manager
-    * Skills
-    * Objectives Key Results (OKR) (coming soon)
-    * e-Coffees
-    * Discipline cases
+- 👷‍♀️ Operate
+
+  - Time tracking
+  - PTOs (ie holidays and time offs) (coming soon)
+  - Expenses management
+  - Hardware and software licenses
+  - Project management
+
+- ☎️ Communicate
+
+  - Work logs
+  - Recent ships
+  - Team and company news
+  - Get to know your colleagues
+  - Wikis
+
+- 🥳 Grow
+  Employee and team morale
+  - One on Ones
+  - Rate your manager
+  - Skills
+  - Objectives Key Results (OKR) (coming soon)
+  - e-Coffees
+  - Discipline cases
 
 <img src="docs/img/profile.png" alt="OfficeLife company" title="OfficeLife" />
 
@@ -113,9 +151,9 @@ OfficeLife is open source, but it comes in several flavors so it fits everyone n
 
 The project is in beta right now, accessible from https://beta.officelife.io. The software might have some bugs that we are fixing as we find them.
 
-* If you find any bugs, please file them by [creating a new issue](https://github.com/officelifehq/officelife/issues).
-* Please don't submit new big ideas for now. We want to do a million other things with OfficeLife already. However, we seek feedback on the current features and how we could make them more useful.
-* We have a documentation portal, that we slowly build: https://docs.officelife.io. It has a lot of content already, but we plan of adding much more before launching in beta.
+- If you find any bugs, please file them by [creating a new issue](https://github.com/officelifehq/officelife/issues).
+- Please don't submit new big ideas for now. We want to do a million other things with OfficeLife already. However, we seek feedback on the current features and how we could make them more useful.
+- We have a documentation portal, that we slowly build: https://docs.officelife.io. It has a lot of content already, but we plan of adding much more before launching in beta.
 
 ## Core team
 
