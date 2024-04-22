@@ -52,18 +52,20 @@ class EmployeeLogViewHelper
     }
 
     /**
-     * Log Types for the employee.
+     * Collection containing audit log types for this employee.
+     * @param mixed $logs
      */
-    public static function employeeLogTypes(Employee $employee): array
+    public static function employeeLogTypes($logTypes): Collection
+
     {
-        $logTypes = DB::table('employee_logs')
-            ->select('action')
-            ->selectRaw('count(*) as number_of_logs')
-            ->where('author_id', $employee->id)
-            ->orderBy('action')
-            ->groupBy('action')
-            ->get()
-            ->toArray();
-        return $logTypes;
+        $logTypesCollection = collect([]);
+        foreach ($logTypes as $logType) {
+            $logTypesCollection->push([
+                'action' => $logType->action,
+                'number_of_logs' => $logType->number_of_logs,
+            ]);
+        }
+
+        return $logTypesCollection;
     }
 }

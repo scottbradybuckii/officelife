@@ -148,7 +148,9 @@ export default {
       default: null,
     },
   },
-
+  create() {
+    window.addEventListener("load", this.onWindowLoad);
+  },
   data() {
     return {
       filterByLogType: '',
@@ -162,12 +164,15 @@ export default {
       return false;
     },
   },
-  methods: { toTitleCase },
+  methods: {
+    toTitleCase,
+    onWindowLoad() {
+      console.log("window load event");
+      if(document.getElementById("current_search").value) {
+        document.getElementById(document.getElementById("current_search").value).selected=true;
+      }
+    },
+  },
 };
 
-window.onload = function(){
-  if(document.getElementById("current_search").value) {
-    document.getElementById(document.getElementById("current_search").value).selected=true;
-  }
-}
 </script>

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Helpers\InstanceHelper;
 use App\Helpers\PaginatorHelper;
 use App\Models\Company\Employee;
+use App\Models\Company\EmployeeLog;
 use Illuminate\Routing\Redirector;
 use App\Helpers\NotificationHelper;
 use App\Http\Controllers\Controller;
@@ -54,12 +55,12 @@ class EmployeeLogsController extends Controller
             $search = $request->get('filterByLogType');
         }
         $logsCollection = EmployeeLogViewHelper::list($logs, $employee->company);
-        $logTypes = EmployeeLogViewHelper::employeeLogTypes($employee);
+        $logTypes = EmployeeLog::groupBy('action')->selectRaw('action, count(*) as number_of_logs')->where('employee_id', $employee->id)->orderBy('action')->get();
 
         return Inertia::render('Employee/Logs/Index', [
             'employee' => EmployeeLogViewHelper::employee($employee),
             'logs' => $logsCollection,
-            'types' => $logTypes,
+            'types' => EmployeeLogViewHelper::employeeLogTypes($logTypes),
             'notifications' => NotificationHelper::getNotifications(InstanceHelper::getLoggedEmployee()),
             'paginator' => PaginatorHelper::getData($logs),
             'search' => $search,
