@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Helpers\InstanceHelper;
 use App\Helpers\PaginatorHelper;
 use App\Models\Company\Employee;
+use App\Models\Company\EmployeeLog;
 use Illuminate\Routing\Redirector;
 use App\Helpers\NotificationHelper;
 use App\Http\Controllers\Controller;
@@ -46,14 +47,27 @@ class EmployeeLogsController extends Controller
         }
 
         // logs
-        $logs = $employee->employeeLogs()->with('author')->paginate(15);
+        if(!$request->get('filterByLogType') || $request->get('filterByLogType') == "show_all_log_types") {
+            $logs = $employee->employeeLogs()->with('author')->paginate(100)->withQueryString();
+            $search = "show_all_log_types";
+        } else {
+            $logs = $employee->employeeLogs()->with('author')->where('action', $request->get('filterByLogType'))->paginate(100)->withQueryString();
+            $search = $request->get('filterByLogType');
+        }
         $logsCollection = EmployeeLogViewHelper::list($logs, $employee->company);
+        $logTypes = EmployeeLog::groupBy('action')->selectRaw('action, count(*) as number_of_logs')->where('employee_id', $employee->id)->orderBy('action')->get();
 
         return Inertia::render('Employee/Logs/Index', [
             'employee' => EmployeeLogViewHelper::employee($employee),
             'logs' => $logsCollection,
+            'types' => EmployeeLogViewHelper::employeeLogTypes($logTypes),
             'notifications' => NotificationHelper::getNotifications(InstanceHelper::getLoggedEmployee()),
             'paginator' => PaginatorHelper::getData($logs),
+            'search' => $search,
+            'url' => route('employee.show.logs', [
+              'company' => $employee->company,
+              'employee' => $employee,
+            ]),
         ]);
     }
 }
