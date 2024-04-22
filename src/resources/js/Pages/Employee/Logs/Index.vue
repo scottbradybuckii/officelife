@@ -43,16 +43,18 @@
           </h2>
 
           <div class="relative pv2 ph2 bb bb-gray">
+            <input type="hidden" name="url" id="url" class="form-control" :value="url">
+            <input type="hidden" name="current_search" id="current_search" class="form-control" :value="search">
             <select
               id="search"
-              v-model="searchTerm"
+              v-model="filterByLogType"
               name="search"
               placeholder="Search for a log"
               class="br2 f5 w-100 ba b--black-40 pa2 outline-0"
             >
-              <option value="">Filter by log type</option>
-              <option v-for="type in logTypes" :value="type" :key="type">
-                {{ toTitleCase(type) }}
+              <option id="show_all_log_types" value="show_all_log_types">Filter by log type</option>
+              <option v-for="type in types" :value="type.action" :key="type.action" :id="type.action">
+                {{ toTitleCase(type.action) }} ({{ type.number_of_logs }})
               </option>
             </select>
           </div>
@@ -129,6 +131,18 @@ export default {
       type: Array,
       default: null,
     },
+    types: {
+      type: Array,
+      default: null,
+    },
+    search: {
+      type: String,
+      default: '',
+    },
+    url: {
+      type: String,
+      default: null,
+    },
     paginator: {
       type: Object,
       default: null,
@@ -137,18 +151,23 @@ export default {
 
   data() {
     return {
-      searchTerm: '',
+      filterByLogType: '',
       logTypes,
     };
   },
   computed: {
     filteredLogs() {
-      if (!this.searchTerm) return this.logs;
-      return this.logs.filter((log) => {
-        return log.action == this.searchTerm;
-      });
+      if (!this.filterByLogType) return this.logs;
+      window.location.href = this.url + '?filterByLogType=' + this.filterByLogType;
+      return false;
     },
   },
   methods: { toTitleCase },
 };
+
+window.onload = function(){
+  if(document.getElementById("current_search").value) {
+    document.getElementById(document.getElementById("current_search").value).selected=true;
+  }
+}
 </script>

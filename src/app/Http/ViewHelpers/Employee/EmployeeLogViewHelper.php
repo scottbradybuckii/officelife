@@ -6,6 +6,7 @@ use App\Helpers\ImageHelper;
 use App\Models\Company\Company;
 use App\Models\Company\Employee;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class EmployeeLogViewHelper
 {
@@ -48,5 +49,21 @@ class EmployeeLogViewHelper
             'name' => $employee->name,
             'avatar' => ImageHelper::getAvatar($employee, 80),
         ];
+    }
+
+    /**
+     * Log Types for the employee.
+     */
+    public static function employeeLogTypes(Employee $employee): array
+    {
+        $logTypes = DB::table('employee_logs')
+            ->select('action')
+            ->selectRaw('count(*) as number_of_logs')
+            ->where('author_id', $employee->id)
+            ->orderBy('action')
+            ->groupBy('action')
+            ->get()
+            ->toArray();
+        return $logTypes;
     }
 }

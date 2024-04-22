@@ -144,7 +144,7 @@ class Employee extends Model
      */
     public function employeeLogs()
     {
-        return $this->hasMany(EmployeeLog::class)->orderBy('audited_at', 'desc');
+        return $this->hasMany(EmployeeLog::class, 'author_id')->orderBy('audited_at', 'desc');
     }
 
     /**
