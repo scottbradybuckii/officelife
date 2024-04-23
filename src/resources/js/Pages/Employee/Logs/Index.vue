@@ -45,20 +45,21 @@
           <div class="relative pv2 ph2 bb bb-gray">
             <select
               id="search"
-              v-model="searchTerm"
+              v-model="filterByLogType"
               name="search"
               placeholder="Search for a log"
               class="br2 f5 w-100 ba b--black-40 pa2 outline-0"
+              @change="filterLogs"
             >
               <option value="">Filter by log type</option>
-              <option v-for="type in logTypes" :value="type" :key="type">
-                {{ toTitleCase(type) }}
+              <option v-for="type in types" :value="type.action" :key="type.action">
+                {{ toTitleCase(type.action) }} ({{ type.number_of_logs }})
               </option>
             </select>
           </div>
 
           <ul class="list pl0 mt0 mb0 center" data-cy="logs-list">
-            <li v-for="log in filteredLogs" :key="log.id" class="flex items-center lh-copy pa3 bb b--black-10 log-item">
+            <li v-for="log in logs" :key="log.id" class="flex items-center lh-copy pa3 bb b--black-10 log-item">
               <!-- avatar -->
               <avatar :avatar="log.author.avatar" :size="34" :class="'author-avatar br-100'" />
 
@@ -107,7 +108,8 @@
 import Layout from '@/Shared/Layout';
 import Breadcrumb from '@/Shared/Layout/Breadcrumb';
 import Avatar from '@/Shared/Avatar';
-import { toTitleCase, logTypes } from './types';
+import { Inertia } from '@inertiajs/inertia';
+import { toTitleCase } from './types';
 
 export default {
   components: {
@@ -129,26 +131,32 @@ export default {
       type: Array,
       default: null,
     },
+    types: {
+      type: Array,
+      default: null,
+    },
+    search: {
+      type: String,
+      default: '',
+    },
     paginator: {
       type: Object,
       default: null,
     },
   },
-
   data() {
     return {
-      searchTerm: '',
-      logTypes,
+      filterByLogType: this.search,
     };
   },
   computed: {
-    filteredLogs() {
-      if (!this.searchTerm) return this.logs;
-      return this.logs.filter((log) => {
-        return log.action == this.searchTerm;
-      });
+    filterLogs() {
+      Inertia.reload({ data: { filterByLogType: this.filterByLogType } });
     },
   },
-  methods: { toTitleCase },
+  methods: {
+    toTitleCase,
+  },
 };
+
 </script>
