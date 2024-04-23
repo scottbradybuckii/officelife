@@ -6,7 +6,6 @@ use App\Helpers\ImageHelper;
 use App\Models\Company\Company;
 use App\Models\Company\Employee;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 
 class EmployeeLogViewHelper
 {
@@ -49,23 +48,5 @@ class EmployeeLogViewHelper
             'name' => $employee->name,
             'avatar' => ImageHelper::getAvatar($employee, 80),
         ];
-    }
-
-    /**
-     * Collection containing audit log types for this employee.
-     * @param mixed $logs
-     */
-    public static function employeeLogTypes($logTypes): Collection
-
-    {
-        $logTypesCollection = collect([]);
-        foreach ($logTypes as $logType) {
-            $logTypesCollection->push([
-                'action' => $logType->action,
-                'number_of_logs' => $logType->number_of_logs,
-            ]);
-        }
-
-        return $logTypesCollection;
     }
 }

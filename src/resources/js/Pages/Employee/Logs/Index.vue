@@ -43,24 +43,23 @@
           </h2>
 
           <div class="relative pv2 ph2 bb bb-gray">
-            <input type="hidden" name="url" id="url" class="form-control" :value="url">
-            <input type="hidden" name="current_search" id="current_search" class="form-control" :value="search">
             <select
               id="search"
               v-model="filterByLogType"
               name="search"
               placeholder="Search for a log"
               class="br2 f5 w-100 ba b--black-40 pa2 outline-0"
+              @change="filterLogs"
             >
-              <option id="show_all_log_types" value="show_all_log_types">Filter by log type</option>
-              <option v-for="type in types" :value="type.action" :key="type.action" :id="type.action">
+              <option value="">Filter by log type</option>
+              <option v-for="type in types" :value="type.action" :key="type.action">
                 {{ toTitleCase(type.action) }} ({{ type.number_of_logs }})
               </option>
             </select>
           </div>
 
           <ul class="list pl0 mt0 mb0 center" data-cy="logs-list">
-            <li v-for="log in filteredLogs" :key="log.id" class="flex items-center lh-copy pa3 bb b--black-10 log-item">
+            <li v-for="log in logs" :key="log.id" class="flex items-center lh-copy pa3 bb b--black-10 log-item">
               <!-- avatar -->
               <avatar :avatar="log.author.avatar" :size="34" :class="'author-avatar br-100'" />
 
@@ -109,7 +108,8 @@
 import Layout from '@/Shared/Layout';
 import Breadcrumb from '@/Shared/Layout/Breadcrumb';
 import Avatar from '@/Shared/Avatar';
-import { toTitleCase, logTypes } from './types';
+import { Inertia } from '@inertiajs/inertia';
+import { toTitleCase } from './types';
 
 export default {
   components: {
@@ -139,39 +139,23 @@ export default {
       type: String,
       default: '',
     },
-    url: {
-      type: String,
-      default: null,
-    },
     paginator: {
       type: Object,
       default: null,
     },
   },
-  create() {
-    window.addEventListener("load", this.onWindowLoad);
-  },
   data() {
     return {
-      filterByLogType: '',
-      logTypes,
+      filterByLogType: this.search,
     };
   },
   computed: {
-    filteredLogs() {
-      if (!this.filterByLogType) return this.logs;
-      window.location.href = this.url + '?filterByLogType=' + this.filterByLogType;
-      return false;
+    filterLogs() {
+      Inertia.reload({ data: { filterByLogType: this.filterByLogType } });
     },
   },
   methods: {
     toTitleCase,
-    onWindowLoad() {
-      console.log("window load event");
-      if(document.getElementById("current_search").value) {
-        document.getElementById(document.getElementById("current_search").value).selected=true;
-      }
-    },
   },
 };
 
